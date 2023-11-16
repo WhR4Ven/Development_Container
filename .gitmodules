@@ -1,0 +1,10 @@
+[submodule "Runtime_Node"]
+	path = Runtime_Node
+	url = https://gitlab.ika.rwth-aachen.de/container_runtime/loader.git
+
+[submodule "Runtime_Master_Main"]
+	path = Runtime_Master_Main
+	url = https://gitlab.ika.rwth-aachen.de/container_runtime/runtime_master_main.git
+[submodule "Runtime_Master_DDS"]
+	path = Runtime_Master_DDS
+	url = https://gitlab.ika.rwth-aachen.de/container_runtime/runtime_master_dds.git
