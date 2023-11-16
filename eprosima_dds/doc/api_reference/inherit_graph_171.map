@@ -1,0 +1,4 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classeprosima_1_1fastrtps_1_1xmlparser_1_1_x_m_l_parser.html" title="Class XMLParser, used to load XML data." alt="" coords="5,5,96,32"/>
+<area shape="rect" id="node2" href="$classeprosima_1_1fastrtps_1_1xmlparser_1_1_x_m_l_endpoint_parser.html" title="Class XMLEndpointParser used to parse the XML file that contains information about remote endpoints." alt="" coords="144,5,291,32"/>
+</map>

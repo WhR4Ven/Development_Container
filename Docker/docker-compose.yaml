@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  runtime:
+    tty: true
+    image: container_runtime
+    privileged: true
+    build:
+      context: ../
+      dockerfile: ./Docker/Dockerfile
+    volumes:
+      - ../:/app
+    network_mode: "host"

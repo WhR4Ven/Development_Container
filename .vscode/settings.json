@@ -1,0 +1,7 @@
+{
+    "cmake.sourceDirectory": "/app/eprosima_dds/src/fastcdr",
+    "files.associations": {
+        "sockets.h": "c",
+        "io_context": "c"
+    }
+}
