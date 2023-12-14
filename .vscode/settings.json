@@ -65,6 +65,23 @@
         "typeinfo": "cpp",
         "*.ipp": "c",
         "valarray": "c",
-        "loader_comm_interface.h": "c"
+        "loader_comm_interface.h": "c",
+        "any": "cpp",
+        "codecvt": "cpp",
+        "complex": "cpp",
+        "coroutine": "cpp",
+        "csignal": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp",
+        "optional": "cpp",
+        "source_location": "cpp",
+        "fstream": "cpp",
+        "future": "cpp",
+        "scoped_allocator": "cpp",
+        "shared_mutex": "cpp",
+        "cinttypes": "cpp",
+        "typeindex": "cpp",
+        "variant": "cpp",
+        "cerrno": "c"
     }
 }
