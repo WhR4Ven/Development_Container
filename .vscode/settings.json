@@ -82,6 +82,14 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "variant": "cpp",
-        "cerrno": "c"
+        "cerrno": "c",
+        "hw_glob.h": "c",
+        "hw_light.h": "c",
+        "v_video.h": "c",
+        "stat.h": "c",
+        "unistd.h": "c",
+        "mman.h": "c",
+        "container_management.h": "c",
+        "cgroup_management.h": "c"
     }
 }
