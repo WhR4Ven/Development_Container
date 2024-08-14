@@ -1,5 +1,0 @@
-var classeprosima_1_1detail_1_1shared__mutex_3_01shared__mutex__type_1_1_p_t_h_r_e_a_d___r_w_l_o_c_kdcbf6a39c897cb6b81d5e67bd982af50 =
-[
-    [ "lock", "classeprosima_1_1detail_1_1shared__mutex_3_01shared__mutex__type_1_1_p_t_h_r_e_a_d___r_w_l_o_c_kdcbf6a39c897cb6b81d5e67bd982af50.html#aa81aed607133209dade63a226818224d", null ],
-    [ "unlock_shared", "classeprosima_1_1detail_1_1shared__mutex_3_01shared__mutex__type_1_1_p_t_h_r_e_a_d___r_w_l_o_c_kdcbf6a39c897cb6b81d5e67bd982af50.html#a3df71da9feb63fdb45f0b86b409e17f0", null ]
-];

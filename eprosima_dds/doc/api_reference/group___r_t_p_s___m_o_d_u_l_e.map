@@ -1,9 +1,0 @@
-<map id="RTPS" name="RTPS">
-<area shape="rect" id="node1" href="$group___r_e_a_d_e_r___m_o_d_u_l_e.html" title="This module contains all classes and methods associated with RTPSReader and its specifications,..." alt="" coords="335,5,455,31"/>
-<area shape="rect" id="node2" href="$group___f_a_s_t_r_t_p_s___g_e_n_e_r_a_l___a_p_i.html" title="eProsima Fast RTPS API grouped in modules." alt="" coords="5,97,155,137"/>
-<area shape="rect" id="node7" title="RTPS API This is an implementation of the RTPS communication standard defined by the OMG." alt="" coords="203,104,257,129"/>
-<area shape="rect" id="node3" href="$group___w_r_i_t_e_r___m_o_d_u_l_e.html" title="This module contains all classes and methods associated with RTPSWriter and its specifications,..." alt="" coords="337,55,452,80"/>
-<area shape="rect" id="node4" href="$group___n_e_t_w_o_r_k___m_o_d_u_l_e.html" title="Includes the elements necessary to interface between the transport layer and the FastRTPS library." alt="" coords="330,104,459,129"/>
-<area shape="rect" id="node5" href="$group___c_o_m_m_o_n___m_o_d_u_l_e.html" title="Common structures used by multiple elements." alt="" coords="326,153,463,179"/>
-<area shape="rect" id="node6" href="$group___r_t_p_s___a_t_t_r_i_b_u_t_e_s___m_o_d_u_l_e.html" title="Attributes class used to define the public entities that the user should use to control this library." alt="" coords="305,203,484,228"/>
-</map>

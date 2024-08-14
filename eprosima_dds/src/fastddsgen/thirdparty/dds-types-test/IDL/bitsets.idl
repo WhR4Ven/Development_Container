@@ -1,6 +1,0 @@
-#include "helpers/basic_inner_types.idl"
-
-struct BitsetStruct
-{
-    InnerBitsetHelper var_InnerBitsetHelper;
-};

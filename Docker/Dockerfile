@@ -17,7 +17,10 @@ RUN apt-get update && \
 		wget
 
 		
-#RUN cd eprosima_dds && ./install.sh
+COPY eProsima_Fast-DDS-v2.14.2-Linux.tgz eProsima_Fast-DDS-v2.14.2-Linux.tgz
+RUN mkdir eprosima_dds
+RUN tar -xvzf eProsima_Fast-DDS-v2.14.2-Linux.tgz --directory eprosima_dds
+RUN cd eprosima_dds && ./install.sh
 
 RUN wget https://go.dev/dl/go1.21.4.linux-amd64.tar.gz
 RUN tar -C /usr/local -xzf go1.21.4.linux-amd64.tar.gz
