@@ -45,6 +45,7 @@ class Node:
             self.available_storage += task.storage
             self.tasks.remove(task)
 
+
 class Task:
     def __init__(self, task_id, cpu, ram, storage, duration, start_time):
         self.task_id = task_id
@@ -61,6 +62,7 @@ class Task:
             self.remaining -= 1
         return self.remaining == 0
 
+
 class GreedyScheduler:
     def __init__(self, nodes):
         self.nodes = nodes
@@ -70,15 +72,16 @@ class GreedyScheduler:
             if node.assign_task(task):
                 return True
         return False
-    
+
+
 def export_to_csv(history, filename="schedule.csv"):
     df = pd.DataFrame(history, columns=["task_id", "node_id", "start", "duration"])
     df.to_csv(filename, index=False)
     print(f"Exported schedule to {filename}")
 
+
 # Simulation mit Logging für Gantt-Chart
-def run_simulation(
-    seed=42):
+def run_simulation(seed=42):
     random.seed(seed)
     nodes = [Node(node_id=i, cpu=16, ram=64, storage=500) for i in range(Num_Nodes)]
     scheduler = GreedyScheduler(nodes)
@@ -88,6 +91,7 @@ def run_simulation(
     history = []
     utilization_log = []
     scheduling_time_log = []
+    system_log = []  # neues Log für aktive Nodes & Tasks
 
     # === Start-Tasks ===
     for i in range(Num_Tasks):
@@ -170,9 +174,24 @@ def run_simulation(
             tick_util[f"Node{node.node_id}_Storage"] = (node.total_storage - node.available_storage) / node.total_storage
         utilization_log.append(tick_util)
 
+        # === Systemmetriken loggen ===
+        system_log.append({
+            "tick": tick,
+            "num_nodes": len(nodes),
+            "waiting_tasks": len(waiting_tasks),
+            "running_tasks": len(running_tasks),
+            "total_tasks": len(waiting_tasks) + len(running_tasks),
+            "scheduling_time_s": end_time_tick - start_time_tick
+        })
+
     util_df = pd.DataFrame(utilization_log)
     sched_time_df = pd.DataFrame({"tick": range(1, Num_Ticks + 1), "scheduling_time_s": scheduling_time_log})
-    return history, nodes, util_df, sched_time_df
+    system_df = pd.DataFrame(system_log)
+    system_df.to_csv("system_metrics.csv", index=False)
+    print("Exported system metrics to system_metrics.csv")
+
+    return history, nodes, util_df, sched_time_df, system_df
+
 
 # Visualisierung als Gantt-Chart
 def plot_schedule(history, num_nodes):
@@ -195,46 +214,34 @@ def plot_schedule(history, num_nodes):
 
     plt.show()
 
+
 def plot_utilization(nodes):
-    # Ressourcenarten
     resources = ["CPU", "RAM", "Storage"]
     used = {r: [] for r in resources}
     total = {r: [] for r in resources}
 
-    # Pro Node Nutzung berechnen
     for node in nodes:
-        # Kapazitäten
         total["CPU"].append(node.total_cpu)
         total["RAM"].append(node.total_ram)
         total["Storage"].append(node.total_storage)
 
-        # Genutzte Ressourcen = Gesamtkapazität - aktuell verfügbar
         used["CPU"].append(node.total_cpu - node.available_cpu)
         used["RAM"].append(node.total_ram - node.available_ram)
         used["Storage"].append(node.total_storage - node.available_storage)
 
-    # Gesamtauslastung berechnen
     avg_usage = {
         r: sum(used[r]) / sum(total[r]) if sum(total[r]) else 0
         for r in resources
     }
 
-    # Plotten
     fig, ax = plt.subplots(figsize=(10, 5))
     bar_width = 0.25
     x = range(len(nodes))
 
-    # Balken für jede Ressource
     for i, r in enumerate(resources):
         usage = [used[r][j] / total[r][j] if total[r][j] else 0 for j in range(len(nodes))]
-        ax.bar(
-            [p + i*bar_width for p in x],
-            usage,
-            width=bar_width,
-            label=r
-        )
+        ax.bar([p + i*bar_width for p in x], usage, width=bar_width, label=r)
 
-    # Gesamtdurchschnitt als zusätzliche Balken rechts
     for i, r in enumerate(resources):
         ax.bar(len(nodes) + i*bar_width,
                avg_usage[r],
@@ -243,7 +250,6 @@ def plot_utilization(nodes):
                hatch="//",
                label=f"{r} (Gesamt)")
 
-    # Achsen und Titel
     ax.set_ylabel("Auslastung (0–1)")
     ax.set_title("Node- und Gesamtauslastung")
     ax.set_xticks([p + bar_width for p in x] + [len(nodes) + bar_width])
@@ -254,9 +260,9 @@ def plot_utilization(nodes):
 
     plt.show()
 
+
 def plot_utilization_over_time(util_df):
     fig, axs = plt.subplots(3, 1, figsize=(12, 8), sharex=True)
-
     resources = ["CPU", "RAM", "Storage"]
 
     for i, res in enumerate(resources):
@@ -269,12 +275,13 @@ def plot_utilization_over_time(util_df):
         ax.legend(loc="upper right")
 
     axs[-1].set_xlabel("Ticks")
-    fig.suptitle("Auslastung der 5 Nodes über die Zeit")
+    fig.suptitle("Auslastung der Nodes über die Zeit")
     plt.tight_layout()
     plt.show()
 
+
 def plot_scheduling_time(sched_time_df):
-    plt.figure(figsize=(10,4))
+    plt.figure(figsize=(10, 4))
     plt.plot(sched_time_df["tick"], sched_time_df["scheduling_time_s"], marker='o')
     plt.xlabel("Tick")
     plt.ylabel("Schedulingzeit pro Tick [s]")
@@ -282,11 +289,35 @@ def plot_scheduling_time(sched_time_df):
     plt.grid(True)
     plt.show()
 
+
+def plot_system_log(system_df):
+    fig, axs = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
+
+    axs[0].plot(system_df["tick"], system_df["num_nodes"], label="Aktive Nodes", color="blue")
+    axs[0].set_ylabel("Nodes")
+    axs[0].set_title("Aktive Nodes über die Zeit")
+    axs[0].grid(True)
+    axs[0].legend()
+
+    axs[1].plot(system_df["tick"], system_df["waiting_tasks"], label="Wartend", color="orange")
+    axs[1].plot(system_df["tick"], system_df["running_tasks"], label="Laufend", color="green")
+    axs[1].plot(system_df["tick"], system_df["total_tasks"], label="Gesamt", color="red", linestyle="--")
+    axs[1].set_ylabel("Tasks")
+    axs[1].set_xlabel("Ticks")
+    axs[1].set_title("Tasks über die Zeit")
+    axs[1].grid(True)
+    axs[1].legend()
+
+    plt.tight_layout()
+    plt.show()
+
+
 # Hauptprogramm
 if __name__ == "__main__":
-    history, nodes, util_df, sched_time_df = run_simulation()
+    history, nodes, util_df, sched_time_df, system_df = run_simulation()
     plot_schedule(history, len(nodes))
     plot_utilization(nodes)  # Endzustand
     plot_utilization_over_time(util_df)  # Verlauf der Ressourcen
     plot_scheduling_time(sched_time_df)  # Schedulingzeit pro Tick
+    plot_system_log(system_df)  # Nodes & Tasks über Zeit
     export_to_csv(history)
