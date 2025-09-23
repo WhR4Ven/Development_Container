@@ -10,4 +10,4 @@ services:
       dockerfile: ./Docker/Dockerfile
     volumes:
       - ../:/app
-    network_mode: "host"
+    network_mode: host
