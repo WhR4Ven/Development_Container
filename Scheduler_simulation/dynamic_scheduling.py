@@ -5,10 +5,10 @@ import pandas as pd
 import time  # oben sicherstellen, dass time importiert ist
 
 Num_Ticks = 50
-Num_Nodes = 20
-Num_Tasks = 200
-Num_Tasks_Per_Tick = 50
-Num_Nodes_Per_Tick = 1
+Num_Nodes = 200
+Num_Tasks = 2000
+Num_Tasks_Per_Tick = 500
+Num_Nodes_Per_Tick = 10
 Prob_Node_Change = 0.2
 
 
@@ -134,11 +134,10 @@ def run_simulation(seed=42):
                 if random.random() < 0.5 and nodes:  # Node entfernen
                     removed = nodes.pop()
                     print(f"⚠️ Node {removed.node_id} entfernt")
-                    # Laufende Tasks von entferntem Node abbrechen
                     for t in removed.tasks[:]:
                         removed.release_task(t)
                         running_tasks.remove(t)
-                        waiting_tasks.append(t)  # zurück in Queue
+                        waiting_tasks.append(t)
                 else:  # Node hinzufügen
                     new_id = max([n.node_id for n in nodes]) + 1 if nodes else 0
                     new_node = Node(new_id, cpu=16, ram=64, storage=500)
@@ -175,13 +174,24 @@ def run_simulation(seed=42):
         utilization_log.append(tick_util)
 
         # === Systemmetriken loggen ===
+        total_cpu = sum(n.total_cpu for n in nodes)
+        total_ram = sum(n.total_ram for n in nodes)
+        total_storage = sum(n.total_storage for n in nodes)
+
+        used_cpu = sum(n.total_cpu - n.available_cpu for n in nodes)
+        used_ram = sum(n.total_ram - n.available_ram for n in nodes)
+        used_storage = sum(n.total_storage - n.available_storage for n in nodes)
+
         system_log.append({
             "tick": tick,
             "num_nodes": len(nodes),
             "waiting_tasks": len(waiting_tasks),
             "running_tasks": len(running_tasks),
             "total_tasks": len(waiting_tasks) + len(running_tasks),
-            "scheduling_time_s": end_time_tick - start_time_tick
+            "scheduling_time_s": end_time_tick - start_time_tick,
+            "total_cpu_util": used_cpu / total_cpu if total_cpu else 0,
+            "total_ram_util": used_ram / total_ram if total_ram else 0,
+            "total_storage_util": used_storage / total_storage if total_storage else 0,
         })
 
     util_df = pd.DataFrame(utilization_log)
@@ -199,7 +209,8 @@ def plot_schedule(history, num_nodes):
     colors = plt.cm.get_cmap("tab20", len(history))
 
     for i, (task_id, node_id, start, duration) in enumerate(history):
-        ax.broken_barh([(start, duration)], (node_id - 0.4, 0.8), facecolors=colors(i), label=task_id if i < 10 else "")
+        ax.broken_barh([(start, duration)], (node_id - 0.4, 0.8),
+                       facecolors=colors(i), label=task_id if i < 10 else "")
 
     ax.set_xlabel("Zeit (Ticks)")
     ax.set_ylabel("Node")
@@ -208,7 +219,6 @@ def plot_schedule(history, num_nodes):
     ax.set_title("Greedy Scheduling Simulation (Gantt-Chart)")
     ax.grid(True)
 
-    # Nur die ersten 10 Tasks in Legende
     handles, labels = ax.get_legend_handles_labels()
     ax.legend(handles, labels, title="Tasks", loc="upper right", fontsize="small")
 
@@ -312,6 +322,21 @@ def plot_system_log(system_df):
     plt.show()
 
 
+def plot_total_utilization(system_df):
+    plt.figure(figsize=(10, 5))
+    plt.plot(system_df["tick"], system_df["total_cpu_util"], label="CPU", color="red")
+    plt.plot(system_df["tick"], system_df["total_ram_util"], label="RAM", color="blue")
+    plt.plot(system_df["tick"], system_df["total_storage_util"], label="Storage", color="green")
+    plt.xlabel("Ticks")
+    plt.ylabel("Auslastung (0–1)")
+    plt.title("Gesamtauslastung aller Nodes über die Zeit")
+    plt.ylim(0, 1.1)
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+
 # Hauptprogramm
 if __name__ == "__main__":
     history, nodes, util_df, sched_time_df, system_df = run_simulation()
@@ -320,4 +345,5 @@ if __name__ == "__main__":
     plot_utilization_over_time(util_df)  # Verlauf der Ressourcen
     plot_scheduling_time(sched_time_df)  # Schedulingzeit pro Tick
     plot_system_log(system_df)  # Nodes & Tasks über Zeit
+    plot_total_utilization(system_df)  # Gesamtauslastung über Zeit
     export_to_csv(history)
